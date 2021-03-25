@@ -70,7 +70,7 @@
 <script>
 export default {
   data() {
-    return { tareaObjObj: this.tarea };
+    return { tareaObj: this.tarea };
   },
   props: {
     tarea: Object,
