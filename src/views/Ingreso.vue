@@ -1,16 +1,21 @@
 <template>
   <div class="container">
     <h2 class="my-5">Ingreso de usuarios</h2>
+    <div class="alert alert-danger" v-show="error.tipo !== null">
+      {{ error.mensaje }}
+    </div>
     <form ref="form" @submit.prevent="procesarFormulario">
       <input
         v-model.trim="email"
         class="form-control my-2"
+        :class="[error.tipo === 'Email' ? 'is-invalid' : '']"
         type="email"
         placeholder="Email"
       />
       <input
         v-model="pass1"
         class="form-control my-2"
+        :class="[error.tipo === 'Password' ? 'is-invalid' : '']"
         type="password"
         placeholder="Contraseña"
       />
@@ -26,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Ingresar",
@@ -46,11 +51,12 @@ export default {
       }
       return true;
     },
+    ...mapState(["error"]),
   },
   methods: {
     ...mapActions(["ingresoUsuario"]),
-    procesarFormulario() {
-      this.ingresoUsuario({ email: this.email, password: this.pass1 });
+    async procesarFormulario() {
+      await this.ingresoUsuario({ email: this.email, password: this.pass1 });
       this.$refs.form.reset();
     },
   },

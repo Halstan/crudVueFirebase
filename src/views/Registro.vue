@@ -1,10 +1,14 @@
 <template>
   <div class="container">
     <h2 class="my-5">Registro de usuarios</h2>
+    <div class="alert alert-danger" v-show="error.tipo !== null">
+      {{ error.mensaje }}
+    </div>
     <form ref="form" @submit.prevent="procesarFormulario">
       <input
         v-model.trim="email"
         class="form-control my-2"
+        :class="[error.tipo === 'Existe' ? 'is-invalid' : '']"
         type="email"
         placeholder="Email"
       />
@@ -32,7 +36,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Registro",
@@ -54,11 +58,12 @@ export default {
       }
       return true;
     },
+    ...mapState(["error"]),
   },
   methods: {
     ...mapActions(["registrarUsuario"]),
-    procesarFormulario() {
-      this.registrarUsuario({ email: this.email, password: this.pass1 });
+    async procesarFormulario() {
+      await this.registrarUsuario({ email: this.email, password: this.pass1 });
       this.$refs.form.reset();
     },
   },

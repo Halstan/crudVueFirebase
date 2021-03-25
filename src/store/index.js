@@ -12,8 +12,26 @@ export default createStore({
       numero: 0,
     },
     user: null,
+    error: { tipo: null, mensaje: null }
   },
   mutations: {
+    setError(state, payload) {
+      if (payload === null) {
+        return state.error = { tipo: null, mensaje: null }
+      }
+      if (payload === "EMAIL_NOT_FOUND") {
+        return state.error = { tipo: "Email", mensaje: "Email no registrado" }
+      }
+      if (payload === "INVALID_PASSWORD") {
+        return state.error = { tipo: "Password", mensaje: "Contraseña no valida" }
+      }
+      if (payload === "EMAIL_EXISTS") {
+        return state.error = { tipo: "Existe", mensaje: "Este correo ya está registrado" }
+      }
+      if (payload === "INVALID_EMAIL") {
+        return state.error = { tipo: "Invalid", mensaje: "Este correo es invalido" }
+      }
+    },
     setUser(state, payload) {
       state.user = payload;
     },
@@ -61,9 +79,10 @@ export default createStore({
         );
         const data = await res.json();
         if (data.error) {
-          return console.log(data.error);
+          return commit("setError", data.error.message)
         }
         commit("setUser", data);
+        commit("setError", null)
         router.push("/");
         sessionStorage.setItem("usuario", JSON.stringify(data));
       } catch (error) {
@@ -85,10 +104,10 @@ export default createStore({
         );
         const data = await res.json();
         if (data.error) {
-          console.log(data.error);
-          return;
+          return commit("setError", data.error.message)
         }
         commit("setUser", data);
+        commit("setError", null)
         router.push("/");
         sessionStorage.setItem("usuario", JSON.stringify(data));
       } catch (error) {
